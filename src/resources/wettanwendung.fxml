@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.TreeView?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="src.main.WettanwendungController">
+   <children>
+      <SplitPane dividerPositions="0.2036727879799666" layoutX="255.0" layoutY="111.0" prefHeight="689.0" prefWidth="1200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="111.0">
+        <items>
+          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
+               <children>
+                  <TreeView id="navigation" layoutX="27.0" layoutY="90.0" prefHeight="798.0" prefWidth="241.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+               </children>
+            </AnchorPane>
+          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
+               <children>
+                  <SplitPane dividerPositions="0.28015075376884424" orientation="VERTICAL" prefHeight="798.0" prefWidth="951.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                    <items>
+                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
+                           <children>
+                              <TableView id="table" layoutX="113.0" layoutY="-25.0" prefHeight="220.0" prefWidth="949.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                <columns>
+                                    <TableColumn fx:id="anstosszeitColumn" prefWidth="75.0" text="Anstosszeit" />
+                                    <TableColumn fx:id="mannschaft1Column" prefWidth="75.0" text="Mannschaft 1" />
+                                    <TableColumn fx:id="mannschaft2Column" prefWidth="75.0" text="Mannschaft 2" />
+                                    <TableColumn fx:id="spielortColumn" prefWidth="75.0" text="Mannschaft 2" />
+                                    <TableColumn fx:id="tore1Column" prefWidth="75.0" text="Mannschaft 2" />
+                                    <TableColumn fx:id="tore2Column" prefWidth="75.0" text="Mannschaft 2" />
+                                </columns>
+                              </TableView>
+                           </children>
+                        </AnchorPane>
+                      <AnchorPane id="details" minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
+                           <children>
+                              <HBox id="titleLine" layoutX="33.0" layoutY="25.0" AnchorPane.leftAnchor="33.0" AnchorPane.rightAnchor="52.0">
+                                 <children>
+                                    <HBox id="labels" minWidth="-Infinity">
+                                       <children>
+                                          <Hyperlink id="project" text="PROJECT" />
+                                          <Label text="/" />
+                                          <Hyperlink id="bugId" text="ID" />
+                                       </children>
+                                    </HBox>
+                                    <TextField id="synopsis" prefHeight="25.0" prefWidth="783.0" promptText="SYNOSIS" HBox.hgrow="ALWAYS" />
+                                 </children>
+                              </HBox>
+                              <Label layoutX="42.0" layoutY="78.0" text="Description" />
+                              <TextArea id="descriptionValue" layoutX="42.0" layoutY="114.0" prefHeight="422.0" prefWidth="864.0" AnchorPane.bottomAnchor="34.0" AnchorPane.leftAnchor="42.0" AnchorPane.rightAnchor="43.0" AnchorPane.topAnchor="114.0" />
+                           </children>
+                        </AnchorPane>
+                    </items>
+                  </SplitPane>
+               </children>
+            </AnchorPane>
+        </items>
+      </SplitPane>
+      <Label alignment="TOP_LEFT" layoutX="55.0" layoutY="29.0" prefHeight="42.0" prefWidth="177.0" text="EUROBET">
+         <font>
+            <Font name="System Bold" size="36.0" />
+         </font>
+      </Label>
+      <Label id="messageBar" layoutX="94.0" prefHeight="17.0" prefWidth="117.0" />
+      <ImageView fitHeight="113.0" fitWidth="232.0" layoutX="968.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="688.6399993896484" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <image>
+            <Image url="@titlebar_football.png" />
+         </image>
+      </ImageView>
+   </children>
+</AnchorPane>
