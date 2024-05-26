@@ -264,6 +264,31 @@ public class WettanwendungController {
         }
     }
 
+private int calculatePotential(Mannschaft mannschaft1, Mannschaft mannschaft2, Tipp.TippAuswahl tipp, LocalDateTime anstosszeit) {
+    double staerke1 = mannschaft1.getStrength();
+    double staerke2 = mannschaft2.getStrength();
+    double potential = 0;
+
+    if (tipp == Tipp.TippAuswahl.MANNSCHAFT_1_GEWINNT) {
+        potential = (staerke2 / (staerke1 + staerke2)) * 100;
+    } else if (tipp == Tipp.TippAuswahl.MANNSCHAFT_2_GEWINNT) {
+        potential = (staerke1 / (staerke1 + staerke2)) * 100;
+    } else if (tipp == Tipp.TippAuswahl.UNENTSCHIEDEN) {
+        double staerkeDifferenz = Math.abs(staerke1 - staerke2);
+        potential = (staerkeDifferenz / (staerke1 + staerke2)) * 100;
+    }
+
+    // Apply time factor
+    LocalDateTime now = LocalDateTime.now();
+    long minutesSinceStart = java.time.Duration.between(anstosszeit, now).toMinutes();
+    double k = 0.02; // Adjust this value to change the speed of the decrease
+    if (minutesSinceStart >= 0) {
+        potential = potential * Math.exp(-k * minutesSinceStart);
+    }
+
+    return (int) Math.round(potential);
+}
+
     @FXML
     public void handleAddSpielTipp() {
         // Get the selected game
@@ -276,7 +301,10 @@ public class WettanwendungController {
             if (now.isBefore(deadline)) {
                 try {
                     // Create new Tipp
-                    Tipp newTipp = new Tipp(eingeloggterBenutzer.getId(), selectedSpiel.getId(), (Tipp.TippAuswahl) tippField.getValue());
+                    Tipp.TippAuswahl tippAuswahl = (Tipp.TippAuswahl) tippField.getValue();
+                    LocalDateTime anstosszeit = LocalDateTime.of(anstossdatumField.getValue(), LocalTime.parse(anstosszeitField.getText()));
+                    int potential = calculatePotential(selectedSpiel.getMannschaft1(), selectedSpiel.getMannschaft2(), tippAuswahl, anstosszeit);
+                    Tipp newTipp = new Tipp(eingeloggterBenutzer.getId(), selectedSpiel.getId(), (Tipp.TippAuswahl) tippField.getValue(), potential);
                     // Add to list and update table
                     selectedSpielTipp.setTipp(newTipp);
                     gamesTable.refresh();

@@ -16,12 +16,12 @@ public class Tipp {
     private int potential;
     private int punkte;
 
-    public Tipp(int benutzerId, int spielId, TippAuswahl tipp) {
+    public Tipp(int benutzerId, int spielId, TippAuswahl tipp, int potential) {
         this.id = idCounter++;
         this.benutzerId = benutzerId;
         this.spielId = spielId;
         this.tipp = tipp;
-        this.potential = 100;
+        this.potential = potential;
         this.punkte = 0;
     }
 

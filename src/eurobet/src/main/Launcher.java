@@ -29,8 +29,7 @@ public class Launcher extends Application {
     }
 
     public static void showLoginScene() throws Exception {
-        //Parent root = FXMLLoader.load(Launcher.class.getResource("/login.fxml"));
-        Parent root = FXMLLoader.load(Launcher.class.getResource("/verwaltung2.fxml"));
+        Parent root = FXMLLoader.load(Launcher.class.getResource("/login.fxml"));
         Scene scene = new Scene(root);
         primaryStage.setScene(scene);
         primaryStage.setMinWidth(700);
@@ -39,7 +38,7 @@ public class Launcher extends Application {
     }
 
     public static void showVerwaltungScene() throws Exception {
-        Parent root = FXMLLoader.load(Launcher.class.getResource("/verwaltung2.fxml"));
+        Parent root = FXMLLoader.load(Launcher.class.getResource("/verwaltung.fxml"));
         Scene scene = new Scene(root);
         primaryStage.setScene(scene);
         primaryStage.setMinWidth(700);

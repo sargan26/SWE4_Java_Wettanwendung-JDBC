@@ -6,7 +6,9 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
 import javafx.util.Duration;
 import src.main.Launcher;
 import src.main.classes.Benutzer;
@@ -15,9 +17,9 @@ import src.main.data.DatenManager;
 
 public class LoginController {
     // Parameters
-    private final double successMsgDuration = 0.6;
+    private final double successMsgDuration = 0.35;
     private final double failureMsgDuration = 3.0;
-    private final double fadeOutDuration = 0.3;
+    private final double fadeOutDuration = 0.2;
 
     // --- Data ---
     private DatenManager datenManager;
@@ -29,7 +31,7 @@ public class LoginController {
     private TextField usernameField;
 
     @FXML
-    private TextField passwordField;
+    private PasswordField passwordField;
 
     @FXML
     private Button loginButton;
@@ -42,6 +44,19 @@ public class LoginController {
         datenManager = Launcher.getDatenManager();
         benutzerDao = datenManager.getBenutzerDao();
         benutzerList = benutzerDao.getAll();
+
+        // Add key listener to usernameField and passwordField
+        usernameField.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.ENTER) {
+                handleLoginButtonAction();
+            }
+        });
+
+        passwordField.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.ENTER) {
+                handleLoginButtonAction();
+            }
+        });
     }
 
     @FXML

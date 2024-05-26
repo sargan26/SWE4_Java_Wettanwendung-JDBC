@@ -44,6 +44,7 @@ public class DatenManager {
         ObservableList<Mannschaft> mannschaften = mannschaftenDao.getAll();
 
         // Should be within time frame to vote
+        spieleDao.add(new Spiel(LocalDateTime.now().minusMinutes(20), mannschaften.get(3), mannschaften.get(2), "Warschau", 3, 2, LocalDateTime.now().plusMinutes(70), false, Tipp.TippAuswahl.OFFEN));
         spieleDao.add(new Spiel(LocalDateTime.now().minusMinutes(75), mannschaften.get(0), mannschaften.get(1), "Madrid", 3, 2, LocalDateTime.now().plusMinutes(15), false, Tipp.TippAuswahl.OFFEN));
         // Should not be votable
         spieleDao.add(new Spiel(LocalDateTime.now().minusMinutes(85), mannschaften.get(0), mannschaften.get(1), "Madrid", 3, 2, LocalDateTime.now().plusMinutes(5), false, Tipp.TippAuswahl.OFFEN));
@@ -64,8 +65,8 @@ public class DatenManager {
         ObservableList<Spiel> spiele = spieleDao.getAll();
         ObservableList<Benutzer> benutzer = benutzerDao.getAll();
 
-        tippsDao.add(new Tipp(benutzer.get(1).getId(), spiele.get(2).getId(), Tipp.TippAuswahl.MANNSCHAFT_1_GEWINNT));
-        tippsDao.add(new Tipp(benutzer.get(1).getId(), spiele.get(3).getId(), Tipp.TippAuswahl.UNENTSCHIEDEN));
+        tippsDao.add(new Tipp(benutzer.get(1).getId(), spiele.get(2).getId(), Tipp.TippAuswahl.MANNSCHAFT_1_GEWINNT, 66));
+        tippsDao.add(new Tipp(benutzer.get(1).getId(), spiele.get(3).getId(), Tipp.TippAuswahl.UNENTSCHIEDEN, 33));
     }
 
     public void updateScores() {
