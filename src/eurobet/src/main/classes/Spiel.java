@@ -1,4 +1,4 @@
-package src.main;
+package src.main.classes;
 
 import javafx.beans.property.*;
 
@@ -8,37 +8,41 @@ public class Spiel {
     private static int idCounter = 0;
     private final int id;
     private ObjectProperty<LocalDateTime> anstosszeit;
-    private StringProperty mannschaft1;
-    private StringProperty mannschaft2;
+    private ObjectProperty<Mannschaft> mannschaft1;
+    private ObjectProperty<Mannschaft> mannschaft2;
     private StringProperty spielort;
     private IntegerProperty tore1;
     private IntegerProperty tore2;
     private ObjectProperty<LocalDateTime> endezeit;
     private BooleanProperty spielBeendet;
+    private Tipp.TippAuswahl ergebnis;
 
 
 
-    public Spiel(LocalDateTime anstosszeit, String mannschaft1, String mannschaft2, String spielort, int tore1, int tore2, LocalDateTime endezeit, boolean spielBeendet) {
+    public Spiel(LocalDateTime anstosszeit, Mannschaft mannschaft1, Mannschaft mannschaft2, String spielort, int tore1, int tore2, LocalDateTime endezeit, boolean spielBeendet, Tipp.TippAuswahl ergebnis) {
         this.id = idCounter++;
         this.anstosszeit = new SimpleObjectProperty<>(anstosszeit);
-        this.mannschaft1 = new SimpleStringProperty(mannschaft1);
-        this.mannschaft2 = new SimpleStringProperty(mannschaft2);
+        this.mannschaft1 = new SimpleObjectProperty(mannschaft1);
+        this.mannschaft2 = new SimpleObjectProperty(mannschaft2);
         this.spielort = new SimpleStringProperty(spielort);
         this.tore1 = new SimpleIntegerProperty(tore1);
         this.tore2 = new SimpleIntegerProperty(tore2);
         this.endezeit = new SimpleObjectProperty<>(endezeit);
         this.spielBeendet = new SimpleBooleanProperty(spielBeendet);
+        this.ergebnis = ergebnis;
     }
 
-    public Spiel(LocalDateTime anstosszeit, String mannschaft1, String mannschaft2, String spielort) {this.anstosszeit = new SimpleObjectProperty<>(anstosszeit);
+    public Spiel(LocalDateTime anstosszeit, Mannschaft mannschaft1, Mannschaft mannschaft2, String spielort) {
         this.id = idCounter++;
-        this.mannschaft1 = new SimpleStringProperty(mannschaft1);
-        this.mannschaft2 = new SimpleStringProperty(mannschaft2);
+        this.anstosszeit = new SimpleObjectProperty<>(anstosszeit);
+        this.mannschaft1 = new SimpleObjectProperty(mannschaft1);
+        this.mannschaft2 = new SimpleObjectProperty(mannschaft2);
         this.spielort = new SimpleStringProperty(spielort);
         this.tore1 = new SimpleIntegerProperty(0); // default value
         this.tore2 = new SimpleIntegerProperty(0); // default value
         this.endezeit = new SimpleObjectProperty<>(null); // default value
         this.spielBeendet = new SimpleBooleanProperty(false); // default value
+        this.ergebnis = null;
     }
 
     public int getId() {
@@ -57,27 +61,27 @@ public class Spiel {
         this.anstosszeit.set(anstosszeit);
     }
 
-    public String getMannschaft1() {
+    public Mannschaft getMannschaft1() {
         return mannschaft1.get();
     }
 
-    public StringProperty mannschaft1Property() {
+    public ObjectProperty<Mannschaft> mannschaft1Property() {
         return mannschaft1;
     }
 
-    public void setMannschaft1(String mannschaft1) {
+    public void setMannschaft1(Mannschaft mannschaft1) {
         this.mannschaft1.set(mannschaft1);
     }
 
-    public String getMannschaft2() {
+    public Mannschaft getMannschaft2() {
         return mannschaft2.get();
     }
 
-    public StringProperty mannschaft2Property() {
+    public ObjectProperty<Mannschaft> mannschaft2Property() {
         return mannschaft2;
     }
 
-    public void setMannschaft2(String mannschaft2) {
+    public void setMannschaft2(Mannschaft mannschaft2) {
         this.mannschaft2.set(mannschaft2);
     }
 
@@ -141,9 +145,18 @@ public class Spiel {
         this.spielBeendet.set(spielBeendet);
     }
 
+    public Tipp.TippAuswahl getErgebnis() {
+        return ergebnis;
+    }
+
+    public void setErgebnis(Tipp.TippAuswahl ergebnis) {
+        this.ergebnis = ergebnis;
+    }
+
     @Override
     public String toString() {
         return "Spiel{" +
+                "id=" + id +
                 "anstosszeit=" + anstosszeit +
                 ", mannschaft1=" + mannschaft1 +
                 ", mannschaft2=" + mannschaft2 +

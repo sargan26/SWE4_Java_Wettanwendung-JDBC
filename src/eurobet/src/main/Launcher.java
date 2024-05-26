@@ -8,28 +8,42 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import src.main.data.DatenManager;
 
 public class Launcher extends Application {
     private static Stage primaryStage;
+    private static DatenManager datenManager;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
         Launcher.primaryStage = primaryStage;
+        datenManager = new DatenManager();
+        datenManager.loadExampleBenutzer();
+        datenManager.loadExampleSpiele();
+        datenManager.loadExampleTipps();
         showLoginScene();
+    }
+
+    public static DatenManager getDatenManager() {
+        return datenManager;
     }
 
     public static void showLoginScene() throws Exception {
         //Parent root = FXMLLoader.load(Launcher.class.getResource("/login.fxml"));
-        Parent root = FXMLLoader.load(Launcher.class.getResource("/verwaltung.fxml"));
+        Parent root = FXMLLoader.load(Launcher.class.getResource("/verwaltung2.fxml"));
         Scene scene = new Scene(root);
         primaryStage.setScene(scene);
+        primaryStage.setMinWidth(700);
+        primaryStage.setMinHeight(600);
         primaryStage.show();
     }
 
     public static void showVerwaltungScene() throws Exception {
-        Parent root = FXMLLoader.load(Launcher.class.getResource("/verwaltung.fxml"));
+        Parent root = FXMLLoader.load(Launcher.class.getResource("/verwaltung2.fxml"));
         Scene scene = new Scene(root);
         primaryStage.setScene(scene);
+        primaryStage.setMinWidth(700);
+        primaryStage.setMinHeight(600);
     }
 
     public static void showWettanwendungScene() throws Exception {
@@ -37,17 +51,6 @@ public class Launcher extends Application {
         Scene scene = new Scene(root);
         primaryStage.setScene(scene);
     }
-
-    /*
-    @Override
-    public void start (Stage stage) throws Exception {
-        FXMLLoader fxmlLoader = new FXMLLoader(Launcher.class.getResource("/wettanwendung.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), 1200, 800);
-        stage.setTitle ("Eurobet");
-        stage.setScene (scene);
-        stage.show ();
-    }
-    */
 
     public static void main (String[] args) {
         try {
