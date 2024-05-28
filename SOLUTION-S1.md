@@ -77,5 +77,10 @@ Tipp eingetragen.
 
 Highscore Tabelle.
 
+![img_13.png](img_13.png)
+
+![img_14.png](img_14.png)
+
+Hier sieht man ein Beispiel für das responsive Design, den Vergleich in voller Größe und die Minimumgröße für Tablets. Auch in der kleinen Größe sind alle Elemente sichtbar und bedienbar.
 
 
