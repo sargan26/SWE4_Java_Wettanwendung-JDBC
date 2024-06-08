@@ -3,14 +3,17 @@ package src.main.data;
 import javafx.collections.ObservableList;
 import src.main.classes.Benutzer;
 
-public class BenutzerDao {
-    private ObservableList<Benutzer> benutzer;
+import java.io.Serializable;
+import java.util.List;
 
-    public BenutzerDao(ObservableList<Benutzer> benutzer) {
+public class BenutzerDao {
+    private List<Benutzer> benutzer;
+
+    public BenutzerDao(List<Benutzer> benutzer) {
         this.benutzer = benutzer;
     }
 
-    public ObservableList<Benutzer> getAll() {
+    public List<Benutzer> getAll() {
         return benutzer;
     }
 

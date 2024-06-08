@@ -11,21 +11,17 @@ import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
 import javafx.util.Duration;
 import src.main.*;
 import src.main.classes.*;
-import src.main.data.BenutzerDao;
-import src.main.data.DatenManager;
-import src.main.data.SpieleDao;
-import src.main.data.TippsDao;
+import src.main.server.EuroBetService;
 
+import java.rmi.RemoteException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 
 public class WettanwendungController {
     // --- Constants ---
@@ -33,15 +29,12 @@ public class WettanwendungController {
     private static final int FADE_OUT_TIME = 1000; // 1 second
 
     // --- Data ---
-    private DatenManager datenManager;
-    private SpieleDao spieleDao;
-    private TippsDao tippsDao;
-    private BenutzerDao benutzerDao;
-
+    private EuroBetService euroBetService;
     private ObservableList<Spiel> spieleList;
     private ObservableList<Tipp> tippsList;
     private ObservableList<SpielTipp> spielTippList;
     private ObservableList<Benutzer> benutzerList;
+    private ObservableList<Mannschaft> mannschaftenList;
     private Benutzer eingeloggterBenutzer;
 
     // --- FXML Panes ---
@@ -121,23 +114,24 @@ public class WettanwendungController {
     @FXML
     public void initialize() {
         // Data
-        datenManager = Launcher.getDatenManager();
-        eingeloggterBenutzer = datenManager.getEingeloggterBenutzer();
-        tippsDao = datenManager.getTippsDao();
-        spieleDao = datenManager.getSpieleDao();
-        benutzerDao = datenManager.getBenutzerDao();
+        euroBetService = Client.getEuroBetService();
 
-        spieleList = spieleDao.getAll();
-        tippsList = tippsDao.getAll();
-        benutzerList = benutzerDao.getAll();
+        try {
+            spieleList = FXCollections.observableArrayList(euroBetService.getAllSpiele());
+            tippsList = FXCollections.observableArrayList(euroBetService.getAllTipps());
+            benutzerList = FXCollections.observableArrayList(euroBetService.getAllBenutzer());
+            mannschaftenList = FXCollections.observableArrayList(euroBetService.getAllMannschaften());
+        } catch (RemoteException e) {
+            throw new RuntimeException(e);
+        }
         eingeloggterBenutzer = benutzerList.get(0); // for testing TODO: remove
 
         spielTippList = createSpielTippList();
         ObservableList<Tipp.TippAuswahl> tippAuswahlList = FXCollections.observableArrayList(Tipp.TippAuswahl.values());
         tippAuswahlList.remove(Tipp.TippAuswahl.OFFEN);
         tippField.setItems(tippAuswahlList);
-        mannschaft1Field.setItems(FXCollections.observableArrayList(datenManager.getMannschaftenDao().getAll()));
-        mannschaft2Field.setItems(FXCollections.observableArrayList(datenManager.getMannschaftenDao().getAll()));
+        mannschaft1Field.setItems(mannschaftenList);
+        mannschaft2Field.setItems(mannschaftenList);
 
         // Set up the columns in the table
         anstosszeitColumn.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getSpiel().getAnstosszeit()));
@@ -171,14 +165,6 @@ public class WettanwendungController {
         highscoresBenutzerColumn.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getUsername()));
         highscoresPunkteColumn.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getPunkte()));
         highscoresTable.setItems(benutzerList);
-
-        for (Spiel spiel : datenManager.getSpieleDao().getAll()) {
-            spiel.spielBeendetProperty().addListener((observable, oldValue, newValue) -> {
-                if (Boolean.TRUE.equals(newValue)) {
-                    datenManager.updateScores();
-                }
-            });
-        }
 
         addGamesTableListener();
         showSpielePane();
@@ -258,7 +244,7 @@ public class WettanwendungController {
     @FXML
     public void handleLogout() {
         try {
-            Launcher.showLoginScene();
+            Client.showLoginScene();
         } catch (Exception e) {
             e.printStackTrace();
         }

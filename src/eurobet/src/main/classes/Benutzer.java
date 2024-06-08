@@ -1,8 +1,11 @@
 package src.main.classes;
 
 
+import java.io.Serializable;
 
-public class Benutzer {
+public class Benutzer implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     public enum BenutzerRolle {
         ADMIN,
         USER

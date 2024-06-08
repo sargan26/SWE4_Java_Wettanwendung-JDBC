@@ -3,14 +3,16 @@ package src.main.data;
 import javafx.collections.ObservableList;
 import src.main.classes.Tipp;
 
-public class TippsDao {
-    private ObservableList<Tipp> tipps;
+import java.util.List;
 
-    public TippsDao(ObservableList<Tipp> tipps) {
+public class TippsDao {
+    private List<Tipp> tipps;
+
+    public TippsDao(List<Tipp> tipps) {
         this.tipps = tipps;
     }
 
-    public ObservableList<Tipp> getAll() {
+    public List<Tipp> getAll() {
         return tipps;
     }
 
@@ -20,6 +22,15 @@ public class TippsDao {
 
     public void update(Tipp tipp) {
         // TODO
+    }
+
+    public Tipp getTippById(int id) {
+        for (Tipp tipp : tipps) {
+            if (tipp.getId() == id) {
+                return tipp;
+            }
+        }
+        return null;
     }
 
     public void delete(Tipp tipp) {

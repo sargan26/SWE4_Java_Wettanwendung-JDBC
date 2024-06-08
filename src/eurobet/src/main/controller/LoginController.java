@@ -2,6 +2,7 @@ package src.main.controller;
 
 import javafx.animation.FadeTransition;
 import javafx.animation.PauseTransition;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -10,10 +11,12 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.util.Duration;
-import src.main.Launcher;
+import src.main.Client;
 import src.main.classes.Benutzer;
 import src.main.data.BenutzerDao;
-import src.main.data.DatenManager;
+import src.main.server.EuroBetService;
+
+import java.rmi.RemoteException;
 
 public class LoginController {
     // Parameters
@@ -22,7 +25,8 @@ public class LoginController {
     private final double fadeOutDuration = 0.2;
 
     // --- Data ---
-    private DatenManager datenManager;
+    private EuroBetService euroBetService;
+    private Benutzer eingeloggterBenutzer = null;
     private BenutzerDao benutzerDao;
     private ObservableList<Benutzer> benutzerList;
 
@@ -41,9 +45,12 @@ public class LoginController {
 
     public void initialize() {
         // Data
-        datenManager = Launcher.getDatenManager();
-        benutzerDao = datenManager.getBenutzerDao();
-        benutzerList = benutzerDao.getAll();
+        euroBetService = Client.getEuroBetService();
+        try {
+            benutzerList = FXCollections.observableArrayList(euroBetService.getAllBenutzer());
+        } catch (RemoteException e) {
+            throw new RuntimeException(e);
+        }
 
         // Add key listener to usernameField and passwordField
         usernameField.setOnKeyPressed(event -> {
@@ -67,16 +74,15 @@ public class LoginController {
         for (Benutzer benutzer : benutzerList) {
             if (benutzer.getUsername().equals(username) && benutzer.getPassword().equals(password) && !benutzer.isGesperrt()) {
                 showMessage("Login erfolgreich!", "green", successMsgDuration);
+                eingeloggterBenutzer = benutzer;
 
                 PauseTransition pause = new PauseTransition(Duration.seconds(successMsgDuration));
                 pause.setOnFinished(event -> {
                     try {
                         if (benutzer.isAdmin()) {
-                            datenManager.setEingeloggterBenutzer(benutzer);
-                            Launcher.showVerwaltungScene();
+                            Client.showVerwaltungScene();
                         } else if (benutzer.isUser()) {
-                            datenManager.setEingeloggterBenutzer(benutzer);
-                            Launcher.showWettanwendungScene();
+                            Client.showWettanwendungScene();
                         }
                     } catch (Exception e) {
                         e.printStackTrace();

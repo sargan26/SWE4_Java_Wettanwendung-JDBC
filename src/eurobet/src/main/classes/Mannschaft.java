@@ -1,6 +1,8 @@
 package src.main.classes;
 
-public class Mannschaft {
+import java.io.Serializable;
+
+public class Mannschaft implements Serializable {
     private static int idCounter = 0;
     private final int id;
     private String name;

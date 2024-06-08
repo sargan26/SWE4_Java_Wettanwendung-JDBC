@@ -3,7 +3,6 @@ package src.main.controller;
 import javafx.animation.FadeTransition;
 import javafx.animation.PauseTransition;
 import javafx.animation.SequentialTransition;
-import javafx.beans.binding.ObjectExpression;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -16,20 +15,20 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
 import javafx.util.Duration;
 import src.main.classes.Benutzer;
-import src.main.Launcher;
+import src.main.Client;
 import src.main.classes.Mannschaft;
 import src.main.classes.Spiel;
 import src.main.classes.Tipp;
-import src.main.data.BenutzerDao;
-import src.main.data.DatenManager;
-import src.main.data.MannschaftenDao;
-import src.main.data.SpieleDao;
+import src.main.server.EuroBetService;
 
+import java.rmi.RemoteException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+
+import static src.main.Client.getEuroBetService;
 
 public class VerwaltungController {
     // --- Constants ---
@@ -37,11 +36,7 @@ public class VerwaltungController {
     private static final int FADE_OUT_TIME = 1000; // 1 second
 
     // --- Data ---
-    private DatenManager datenManager;
-    private SpieleDao spieleDao;
-    private MannschaftenDao mannschaftenDao;
-    private BenutzerDao benutzerDao;
-
+    private EuroBetService euroBetService;
     private ObservableList<Spiel> spieleList;
     private ObservableList<Mannschaft> mannschaftenList;
     private ObservableList<Benutzer> benutzerList;
@@ -176,19 +171,19 @@ public class VerwaltungController {
     @FXML
     public void initialize() {
         // Data
-        datenManager = Launcher.getDatenManager();
-        spieleDao = datenManager.getSpieleDao();
-        mannschaftenDao = datenManager.getMannschaftenDao();
-        benutzerDao = datenManager.getBenutzerDao();
+        euroBetService = getEuroBetService();
 
-        spieleList = spieleDao.getAll();
-        mannschaftenList = mannschaftenDao.getAll();
-        benutzerList = benutzerDao.getAll();
+        try {
+            spieleList = FXCollections.observableArrayList(getEuroBetService().getAllSpiele());
+            mannschaftenList = FXCollections.observableArrayList(getEuroBetService().getAllMannschaften());
+            benutzerList = FXCollections.observableArrayList(getEuroBetService().getAllBenutzer());
+        } catch (RemoteException e) {
+            throw new RuntimeException(e);
+        }
 
         benutzerRolleField.setItems(FXCollections.observableArrayList(Benutzer.BenutzerRolle.values()));
-
-        mannschaft1Field.setItems(FXCollections.observableArrayList(datenManager.getMannschaftenDao().getAll()));
-        mannschaft2Field.setItems(FXCollections.observableArrayList(datenManager.getMannschaftenDao().getAll()));
+        mannschaft1Field.setItems(mannschaftenList);
+        mannschaft2Field.setItems(mannschaftenList);
 
         // Set up the columns in the table
         anstosszeitColumn.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getAnstosszeit()));
@@ -214,7 +209,7 @@ public class VerwaltungController {
 
 
         ObservableList<String> mannschaftenNamen = FXCollections.observableArrayList();
-        ObservableList<Mannschaft> mannschaften = datenManager.getMannschaftenDao().getAll();
+        ObservableList<Mannschaft> mannschaften = mannschaftenList;
         for (Mannschaft mannschaft : mannschaften) {
             mannschaftenNamen.add(mannschaft.getName());
         }
@@ -320,7 +315,7 @@ public class VerwaltungController {
     @FXML
     public void handleLogout() {
         try {
-            Launcher.showLoginScene();
+            Client.showLoginScene();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -431,7 +426,7 @@ public class VerwaltungController {
                 }
                 // Add game
                 Spiel newSpiel = new Spiel(anstosszeit, mannschaft1, mannschaft2, spielort, tore1, tore2, endezeit, true, ergebnis);
-                ObservableList<Spiel> spiele = datenManager.getSpieleDao().getAll();
+                ObservableList<Spiel> spiele = spieleList;
                 spiele.add(newSpiel);
                 gamesTable.setItems(spiele);
                 spieleMsg.setStyle("-fx-text-fill: green;");
@@ -521,7 +516,6 @@ public class VerwaltungController {
         Benutzer.BenutzerRolle rolle = benutzerRolleField.getValue();
 
         // Check if user exists
-        ObservableList<Benutzer> benutzerList = datenManager.getBenutzerDao().getAll();
         for (Benutzer benutzer : benutzerList) {
             if (benutzer.getUsername().equals(username)) {
                 benutzerMsg.setStyle("-fx-text-fill: red;");
@@ -572,7 +566,6 @@ public class VerwaltungController {
 
         if (selectedBenutzer != null) {
             // Remove the user from the list
-            ObservableList<Benutzer> benutzerList = datenManager.getBenutzerDao().getAll();
             benutzerList.remove(selectedBenutzer);
             benutzerTable.setItems(benutzerList);
             benutzerMsg.setStyle("-fx-text-fill: green;");
@@ -585,7 +578,6 @@ public class VerwaltungController {
 
 
     private Benutzer getBenutzerByName(String username) {
-        ObservableList<Benutzer> benutzerList = datenManager.getBenutzerDao().getAll();
         for (Benutzer benutzer : benutzerList) {
             if (benutzer.getUsername().equals(username)) {
                 return benutzer;

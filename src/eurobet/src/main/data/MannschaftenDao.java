@@ -3,14 +3,16 @@ package src.main.data;
 import javafx.collections.ObservableList;
 import src.main.classes.Mannschaft;
 
-public class MannschaftenDao {
-    private ObservableList<Mannschaft> mannschaften;
+import java.util.List;
 
-    public MannschaftenDao(ObservableList<Mannschaft> mannschaften) {
+public class MannschaftenDao {
+    private List<Mannschaft> mannschaften;
+
+    public MannschaftenDao(List<Mannschaft> mannschaften) {
         this.mannschaften = mannschaften;
     }
 
-    public ObservableList<Mannschaft> getAll() {
+    public List<Mannschaft> getAll() {
         return mannschaften;
     }
 
@@ -20,6 +22,24 @@ public class MannschaftenDao {
 
     public void update(Mannschaft mannschaft) {
         // TODO
+    }
+
+    public Mannschaft getMannschaftByName(String name) {
+        for (Mannschaft mannschaft : mannschaften) {
+            if ( mannschaft.getName().equals(name)) {
+                return mannschaft;
+            }
+        }
+        return null;
+    }
+
+    public Mannschaft getMannschaftById(int id) {
+        for (Mannschaft mannschaft : mannschaften) {
+            if (mannschaft.getId() == id) {
+                return mannschaft;
+            }
+        }
+        return null;
     }
 
     public void delete(Mannschaft mannschaft) {

@@ -1,13 +1,14 @@
 package src.main.data;
 
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import src.main.classes.Benutzer;
 import src.main.classes.Mannschaft;
 import src.main.classes.Spiel;
 import src.main.classes.Tipp;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DatenManager {
     private SpieleDao spieleDao;
@@ -17,11 +18,11 @@ public class DatenManager {
     private Benutzer eingeloggterBenutzer;
 
     public DatenManager() {
-        // Initialisieren Sie die ObservableLists
-        ObservableList<Spiel> spiele = FXCollections.observableArrayList();
-        ObservableList<Mannschaft> mannschaften = FXCollections.observableArrayList();
-        ObservableList<Benutzer> benutzer = FXCollections.observableArrayList();
-        ObservableList<Tipp> tipps = FXCollections.observableArrayList();
+        // Initialisieren der ArrayLists
+        List<Spiel> spiele = new ArrayList<>();
+        List<Mannschaft> mannschaften = new ArrayList<>();
+        List<Benutzer> benutzer = new ArrayList<>();
+        List<Tipp> tipps = new ArrayList<>();
 
         // Initialisieren Sie die DAOs
         this.spieleDao = new SpieleDao(spiele);
@@ -41,7 +42,7 @@ public class DatenManager {
 
     public void loadExampleSpiele() {
         loadExampleMannschaften();
-        ObservableList<Mannschaft> mannschaften = mannschaftenDao.getAll();
+        List<Mannschaft> mannschaften = mannschaftenDao.getAll();
 
         // Should be within time frame to vote
         spieleDao.add(new Spiel(LocalDateTime.now().minusMinutes(20), mannschaften.get(3), mannschaften.get(2), "Warschau", 3, 2, LocalDateTime.now().plusMinutes(70), false, Tipp.TippAuswahl.OFFEN));
@@ -62,8 +63,8 @@ public class DatenManager {
     }
 
     public void loadExampleTipps() {
-        ObservableList<Spiel> spiele = spieleDao.getAll();
-        ObservableList<Benutzer> benutzer = benutzerDao.getAll();
+        List<Spiel> spiele = spieleDao.getAll();
+        List<Benutzer> benutzer = benutzerDao.getAll();
 
         tippsDao.add(new Tipp(benutzer.get(1).getId(), spiele.get(2).getId(), Tipp.TippAuswahl.MANNSCHAFT_1_GEWINNT, 66));
         tippsDao.add(new Tipp(benutzer.get(1).getId(), spiele.get(3).getId(), Tipp.TippAuswahl.UNENTSCHIEDEN, 33));

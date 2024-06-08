@@ -1,6 +1,8 @@
 package src.main.classes;
 
-public class Tipp {
+import java.io.Serializable;
+
+public class Tipp implements Serializable {
     public enum TippAuswahl {
         MANNSCHAFT_1_GEWINNT,
         MANNSCHAFT_2_GEWINNT,

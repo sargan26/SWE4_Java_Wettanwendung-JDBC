@@ -1,6 +1,8 @@
 package src.main.classes;
 
-public class SpielTipp {
+import java.io.Serializable;
+
+public class SpielTipp implements Serializable  {
     private Spiel spiel;
     private Tipp tipp;
 

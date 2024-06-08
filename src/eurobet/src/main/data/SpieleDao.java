@@ -3,14 +3,16 @@ package src.main.data;
 import javafx.collections.ObservableList;
 import src.main.classes.Spiel;
 
-public class SpieleDao {
-    private ObservableList<Spiel> spiele;
+import java.util.List;
 
-    public SpieleDao(ObservableList<Spiel> spiele) {
+public class SpieleDao {
+    private List<Spiel> spiele;
+
+    public SpieleDao(List<Spiel> spiele) {
         this.spiele = spiele;
     }
 
-    public ObservableList<Spiel> getAll() {
+    public List<Spiel> getAll() {
         return spiele;
     }
 
