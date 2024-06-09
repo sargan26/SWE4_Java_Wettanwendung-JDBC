@@ -1,4 +1,4 @@
-package src.main;
+package src.main.client;
 
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;

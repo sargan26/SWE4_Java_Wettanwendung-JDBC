@@ -13,8 +13,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.util.Duration;
-import src.main.*;
 import src.main.classes.*;
+import src.main.client.Client1;
 import src.main.server.EuroBetService;
 
 import java.rmi.RemoteException;

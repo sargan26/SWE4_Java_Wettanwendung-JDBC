@@ -11,7 +11,7 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.util.Duration;
-import src.main.Client1;
+import src.main.client.Client1;
 import src.main.classes.Benutzer;
 import src.main.data.BenutzerDao;
 import src.main.server.EuroBetService;

@@ -115,7 +115,6 @@ public class EuroBetServiceImpl extends UnicastRemoteObject implements EuroBetSe
 
     @Override
     public void updateMannschaft(Mannschaft mannschaft) throws RemoteException {
-        System.out.println("eurobetservice: updating mannschaft");
         datenManager.getMannschaftenDao().update(mannschaft);
     }
 
@@ -151,13 +150,11 @@ public class EuroBetServiceImpl extends UnicastRemoteObject implements EuroBetSe
 
     @Override
     public void deleteSpiel(Spiel spiel) throws RemoteException {
-        System.out.println("eurobetserviceImpl: deleting spiel");
         datenManager.getSpieleDao().delete(spiel);
     }
 
     @Override
     public void deleteSpielById(int id) throws RemoteException {
-        System.out.println("eurobetserviceImpl: deleting spiel by id" + id);
         datenManager.getSpieleDao().deleteById(id);
     }
 

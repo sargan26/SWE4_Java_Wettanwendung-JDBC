@@ -16,10 +16,9 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
 import javafx.util.Duration;
 import src.main.classes.Benutzer;
-import src.main.Client1;
+import src.main.client.Client1;
 import src.main.classes.Mannschaft;
 import src.main.classes.Spiel;
-import src.main.classes.Tipp;
 import src.main.server.EuroBetService;
 
 import java.rmi.RemoteException;
@@ -27,9 +26,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 
-import static src.main.Client1.getEuroBetService;
+import static src.main.client.Client1.getEuroBetService;
 
 public class VerwaltungController {
     // --- Constants ---
@@ -380,9 +378,7 @@ public void handleUpdateMannschaft() {
             try {
                 // Update team on the server
                 Mannschaft updatedMannschaft = new Mannschaft(name, strength);
-                System.out.println("handleUpdateMannschaft: before updateMannschaft");
                 euroBetService.updateMannschaft(updatedMannschaft);
-                System.out.println("handleUpdateMannschaft: after updateMannschaft");
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -399,7 +395,6 @@ public void handleUpdateMannschaft() {
             e.printStackTrace();
         }
 
-        System.out.println("Task completed");
 
         mannschaftenTable.setItems(mannschaftenList);
         mannschaftenMsg.setStyle("-fx-text-fill: green;");
@@ -562,10 +557,8 @@ public void handleDeleteSpiel() {
     task.setOnSucceeded(event -> {
         // Fetch the updated list from the server
         try {
-            System.out.println("VerwaltungController, handleDeleteSpiel: fetching updated list from server");
             spieleList = FXCollections.observableArrayList(euroBetService.getAllSpiele());
         } catch (RemoteException e) {
-            System.out.println("VerwaltungController, handleDeleteSpiel: failed to fetch updated list from server" );
             e.printStackTrace();
         }
 
