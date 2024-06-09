@@ -16,6 +16,8 @@ public interface EuroBetService extends Remote {
     Benutzer getBenutzerById(int id) throws RemoteException;
     void updateBenutzer(Benutzer benutzer) throws RemoteException;
     void deleteBenutzer(Benutzer benutzer) throws RemoteException;
+    void deleteBenutzerById(int id) throws RemoteException;
+    void deleteBenutzerByName(String username) throws RemoteException;
 
     // Mannschaft
     List<Mannschaft> getAllMannschaften() throws RemoteException;
@@ -24,6 +26,7 @@ public interface EuroBetService extends Remote {
     Mannschaft getMannschaftById(int id) throws RemoteException;
     void updateMannschaft(Mannschaft mannschaft) throws RemoteException;
     void deleteMannschaft(Mannschaft mannschaft) throws RemoteException;
+    void deleteMannschaftByName(String name) throws RemoteException;
 
     // Spiel
     List<Spiel> getAllSpiele() throws RemoteException;
@@ -31,6 +34,7 @@ public interface EuroBetService extends Remote {
     Spiel getSpielById(int id) throws RemoteException;
     void updateSpiel(Spiel spiel) throws RemoteException;
     void deleteSpiel(Spiel spiel) throws RemoteException;
+    void deleteSpielById(int id) throws RemoteException;
 
     // Tipp
     List<Tipp> getAllTipps() throws RemoteException;
@@ -38,8 +42,10 @@ public interface EuroBetService extends Remote {
     Tipp getTippById(int id) throws RemoteException;
     void updateTipp(Tipp tipp) throws RemoteException;
     void deleteTipp(Tipp tipp) throws RemoteException;
+    void deleteTippById(int id) throws RemoteException;
 
     // Zustäzlich
     void updateScores() throws RemoteException;
+    void printHello() throws RemoteException;
 
 }

@@ -21,7 +21,9 @@ public class MannschaftenDao {
     }
 
     public void update(Mannschaft mannschaft) {
-        // TODO
+        Mannschaft oldMannschaft = getMannschaftByName(mannschaft.getName());
+        oldMannschaft.setStrength(mannschaft.getStrength());
+        System.out.println("Mannschaft updated: " + oldMannschaft.toString() + " new strength is: " + mannschaft.getStrength());
     }
 
     public Mannschaft getMannschaftByName(String name) {
@@ -44,5 +46,17 @@ public class MannschaftenDao {
 
     public void delete(Mannschaft mannschaft) {
         this.mannschaften.remove(mannschaft);
+    }
+
+    public void deleteMannschaftByName(String name) {
+        Mannschaft mannschaftToDelete = null;
+        for (Mannschaft mannschaft : mannschaften) {
+            if (mannschaft.getName().equals(name)) {
+                mannschaftToDelete = mannschaft;
+            }
+        }
+        if (mannschaftToDelete != null) {
+            this.mannschaften.remove(mannschaftToDelete);
+        }
     }
 }

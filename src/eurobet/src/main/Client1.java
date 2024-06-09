@@ -10,17 +10,17 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import src.main.controller.LoginController;
 import src.main.server.EuroBetService;
 import src.main.server.Observer;
 
-public class Client extends Application implements Observer {
+public class Client1 extends Application implements Observer {
     private static Stage primaryStage;
-    //private static DatenManager datenManager;
     private static EuroBetService euroBetService;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        Client.primaryStage = primaryStage;
+        Client1.primaryStage = primaryStage;
 
         // Establish connection to registry and lookup service
         Registry registry = LocateRegistry.getRegistry("localhost", 1099);
@@ -33,7 +33,13 @@ public class Client extends Application implements Observer {
     }
 
     public static void showLoginScene() throws Exception {
-        Parent root = FXMLLoader.load(Client.class.getResource("/login.fxml"));
+        FXMLLoader loader = new FXMLLoader(Client1.class.getResource("/login.fxml"));
+        Parent root = loader.load();
+
+        // Get the controller and set the service
+        LoginController controller = loader.getController();
+        controller.setEuroBetService(euroBetService);
+
         Scene scene = new Scene(root);
         primaryStage.setScene(scene);
         primaryStage.setMinWidth(700);
@@ -42,7 +48,7 @@ public class Client extends Application implements Observer {
     }
 
     public static void showVerwaltungScene() throws Exception {
-        Parent root = FXMLLoader.load(Client.class.getResource("/verwaltung.fxml"));
+        Parent root = FXMLLoader.load(Client1.class.getResource("/verwaltung.fxml"));
         Scene scene = new Scene(root);
         primaryStage.setScene(scene);
         primaryStage.setMinWidth(700);
@@ -50,7 +56,7 @@ public class Client extends Application implements Observer {
     }
 
     public static void showWettanwendungScene() throws Exception {
-        Parent root = FXMLLoader.load(Client.class.getResource("/wettanwendung.fxml"));
+        Parent root = FXMLLoader.load(Client1.class.getResource("/wettanwendung.fxml"));
         Scene scene = new Scene(root);
         primaryStage.setScene(scene);
     }

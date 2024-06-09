@@ -46,4 +46,21 @@ public class BenutzerDao {
     public void delete(Benutzer benutzer) {
         this.benutzer.remove(benutzer);
     }
+
+    public void deleteById(int id) {
+        for (Benutzer benutzer : benutzer) {
+            if (benutzer.getId() == id) {
+                this.benutzer.remove(benutzer);
+            }
+        }
+    }
+
+    public void deleteByName(String username) {
+        for (Benutzer benutzer : benutzer) {
+            if (benutzer.getUsername().equals(username)) {
+                this.benutzer.remove(benutzer);
+            }
+        }
+    }
+
 }

@@ -114,7 +114,15 @@ public class WettanwendungController {
     @FXML
     public void initialize() {
         // Data
-        euroBetService = Client.getEuroBetService();
+        euroBetService = Client1.getEuroBetService();
+
+        // Testing the connection
+        try {
+            System.out.println("WettanwendungController: calling printHello from EuroBetService");
+            euroBetService.printHello();
+        } catch (RemoteException e) {
+            throw new RuntimeException(e);
+        }
 
         try {
             spieleList = FXCollections.observableArrayList(euroBetService.getAllSpiele());
@@ -244,7 +252,7 @@ public class WettanwendungController {
     @FXML
     public void handleLogout() {
         try {
-            Client.showLoginScene();
+            Client1.showLoginScene();
         } catch (Exception e) {
             e.printStackTrace();
         }

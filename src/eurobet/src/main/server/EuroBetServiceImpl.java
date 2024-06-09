@@ -82,6 +82,16 @@ public class EuroBetServiceImpl extends UnicastRemoteObject implements EuroBetSe
         datenManager.getBenutzerDao().delete(benutzer);
     }
 
+    @Override
+    public void deleteBenutzerById(int id) throws RemoteException {
+        datenManager.getBenutzerDao().deleteById(id);
+    }
+
+    @Override
+    public void deleteBenutzerByName(String username) throws RemoteException {
+        datenManager.getBenutzerDao().deleteByName(username);
+    }
+
 
     @Override
     public List<Mannschaft> getAllMannschaften() throws RemoteException {
@@ -105,12 +115,18 @@ public class EuroBetServiceImpl extends UnicastRemoteObject implements EuroBetSe
 
     @Override
     public void updateMannschaft(Mannschaft mannschaft) throws RemoteException {
+        System.out.println("eurobetservice: updating mannschaft");
         datenManager.getMannschaftenDao().update(mannschaft);
     }
 
     @Override
     public void deleteMannschaft(Mannschaft mannschaft) throws RemoteException {
         datenManager.getMannschaftenDao().delete(mannschaft);
+    }
+
+    @Override
+    public void deleteMannschaftByName(String name) throws RemoteException {
+        datenManager.getMannschaftenDao().deleteMannschaftByName(name);
     }
 
     @Override
@@ -135,7 +151,14 @@ public class EuroBetServiceImpl extends UnicastRemoteObject implements EuroBetSe
 
     @Override
     public void deleteSpiel(Spiel spiel) throws RemoteException {
+        System.out.println("eurobetserviceImpl: deleting spiel");
         datenManager.getSpieleDao().delete(spiel);
+    }
+
+    @Override
+    public void deleteSpielById(int id) throws RemoteException {
+        System.out.println("eurobetserviceImpl: deleting spiel by id" + id);
+        datenManager.getSpieleDao().deleteById(id);
     }
 
     @Override
@@ -164,8 +187,18 @@ public class EuroBetServiceImpl extends UnicastRemoteObject implements EuroBetSe
     }
 
     @Override
+    public void deleteTippById(int id) throws RemoteException {
+
+    }
+
+    @Override
     public void updateScores() throws RemoteException {
         datenManager.updateScores();
+    }
+
+    @Override
+    public void printHello() throws RemoteException {
+        System.out.println("printHello: Hello from EuroBetServiceImpl");
     }
 
     @Override

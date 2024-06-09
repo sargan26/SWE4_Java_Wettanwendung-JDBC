@@ -6,6 +6,7 @@ import javafx.animation.SequentialTransition;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
@@ -15,7 +16,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
 import javafx.util.Duration;
 import src.main.classes.Benutzer;
-import src.main.Client;
+import src.main.Client1;
 import src.main.classes.Mannschaft;
 import src.main.classes.Spiel;
 import src.main.classes.Tipp;
@@ -28,7 +29,7 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
-import static src.main.Client.getEuroBetService;
+import static src.main.Client1.getEuroBetService;
 
 public class VerwaltungController {
     // --- Constants ---
@@ -173,6 +174,14 @@ public class VerwaltungController {
         // Data
         euroBetService = getEuroBetService();
 
+        // Testing the connection
+        try {
+            System.out.println("VerwaltungController: calling printHello from EuroBetService");
+            euroBetService.printHello();
+        } catch (RemoteException e) {
+            throw new RuntimeException(e);
+        }
+
         try {
             spieleList = FXCollections.observableArrayList(getEuroBetService().getAllSpiele());
             mannschaftenList = FXCollections.observableArrayList(getEuroBetService().getAllMannschaften());
@@ -315,190 +324,376 @@ public class VerwaltungController {
     @FXML
     public void handleLogout() {
         try {
-            Client.showLoginScene();
+            Client1.showLoginScene();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    @FXML
-    public void handleAddMannschaft() {
-        String name = mannschaftenNameField.getText();
-        double strength = Double.parseDouble(mannschaftenStaerkeField.getText());
+@FXML
+public void handleAddMannschaft() {
+    String name = mannschaftenNameField.getText();
+    double strength = Double.parseDouble(mannschaftenStaerkeField.getText());
 
-        // Check if team exists
-        for (Mannschaft mannschaft : mannschaftenList) {
-            if (mannschaft.getName().equals(name)) {
-                mannschaftenMsg.setStyle("-fx-text-fill: red;");
-                showMessage(mannschaftenMsg, "Mannschaft existiert bereits.");
-                return;
-            }
+    // Create a new task
+    Task<Void> task = new Task<Void>() {
+        @Override
+        protected Void call() throws Exception {
+            // Create new team
+            Mannschaft newMannschaft = new Mannschaft(name, strength);
+
+            // Add team on the server
+            euroBetService.addMannschaft(newMannschaft);
+
+            return null;
+        }
+    };
+
+    // Add a listener to update the UI on task completion
+    task.setOnSucceeded(event -> {
+        // Fetch the updated list from the server
+        try {
+            mannschaftenList = FXCollections.observableArrayList(euroBetService.getAllMannschaften());
+        } catch (RemoteException e) {
+            e.printStackTrace();
         }
 
-        // Add team
-        Mannschaft newMannschaft = new Mannschaft(name, strength);
-        mannschaftenList.add(newMannschaft);
         mannschaftenTable.setItems(mannschaftenList);
         mannschaftenMsg.setStyle("-fx-text-fill: green;");
         showMessage(mannschaftenMsg, "Hinzufügen erfolgreich.");
-    }
+    });
 
-    @FXML
-    public void handleUpdateMannschaft() {
-        // Get the selected team
-        String name = mannschaftenNameField.getText();
-        Mannschaft selectedMannschaft = null;
+    // Start the task in a new thread
+    new Thread(task).start();
+}
 
-        for (Mannschaft mannschaft : mannschaftenList) {
-            if (mannschaft.getName().equals(name)) {
-                selectedMannschaft = mannschaft;
-                break;
-            }
-        }
+@FXML
+public void handleUpdateMannschaft() {
+    // Get the selected team
+    String name = mannschaftenNameField.getText();
+    double strength = Double.parseDouble(mannschaftenStaerkeField.getText());
 
-        if (selectedMannschaft != null) {
-            // Update team strength
-            double newStrength = Double.parseDouble(mannschaftenStaerkeField.getText());
-            selectedMannschaft.setStrength(newStrength);
-            mannschaftenTable.refresh();
-            mannschaftenMsg.setStyle("-fx-text-fill: green;");
-            showMessage(mannschaftenMsg, "Update erfolgreich.");
-        } else {
-            mannschaftenMsg.setStyle("-fx-text-fill: red;");
-            showMessage(mannschaftenMsg, "Ausgewählte Mannschaft nicht gefunden.");
-        }
-    }
-
-    @FXML
-    public void handleDeleteMannschaft() {
-        // Get the selected team
-        String name = mannschaftenNameField.getText();
-        Mannschaft selectedMannschaft = null;
-
-        for (Mannschaft mannschaft : mannschaftenList) {
-            if (mannschaft.getName().equals(name)) {
-                selectedMannschaft = mannschaft;
-                break;
-            }
-        }
-
-        if (selectedMannschaft != null) {
-            // Remove the team from the list
-            mannschaftenList.remove(selectedMannschaft);
-            mannschaftenTable.setItems(mannschaftenList);
-            mannschaftenMsg.setStyle("-fx-text-fill: green;");
-            showMessage(mannschaftenMsg, "Löschen erfolgreich.");
-        } else {
-            mannschaftenMsg.setStyle("-fx-text-fill: red;");
-            showMessage(mannschaftenMsg, "Ausgewählte Mannschaft nicht gefunden.");
-        }
-    }
-
-    @FXML
-    public void handleAddSpiel() {
-        String mannschaft1Name = mannschaft1Field.getValue().toString();
-        String mannschaft2Name = mannschaft2Field.getValue().toString();
-        String spielort = spielortField.getText();
-        Mannschaft mannschaft1 = getMannschaftByName(mannschaft1Name);
-        Mannschaft mannschaft2 = getMannschaftByName(mannschaft2Name);
-
-        if (mannschaft1 == null || mannschaft2 == null) {
-            spieleMsg.setStyle("-fx-text-fill: red;");
-            showMessage(spieleMsg, "Mannschaft nicht gefunden.");
-            return;
-        }
-
-        LocalDateTime anstosszeit = LocalDateTime.of(anstossdatumField.getValue(), LocalTime.parse(anstosszeitField.getText(), DateTimeFormatter.ofPattern("HH:mm")));
-
-        if (spielBeendetField.isSelected()) {
+    // Create a new task
+    Task<Void> task = new Task<Void>() {
+        @Override
+        protected Void call() throws Exception {
             try {
+                // Update team on the server
+                Mannschaft updatedMannschaft = new Mannschaft(name, strength);
+                System.out.println("handleUpdateMannschaft: before updateMannschaft");
+                euroBetService.updateMannschaft(updatedMannschaft);
+                System.out.println("handleUpdateMannschaft: after updateMannschaft");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+    };
+
+    // Add a listener to update the UI on task completion
+    task.setOnSucceeded(event -> {
+        // Fetch the updated list from the server
+        try {
+            mannschaftenList = FXCollections.observableArrayList(euroBetService.getAllMannschaften());
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+
+        System.out.println("Task completed");
+
+        mannschaftenTable.setItems(mannschaftenList);
+        mannschaftenMsg.setStyle("-fx-text-fill: green;");
+        showMessage(mannschaftenMsg, "Update erfolgreich.");
+    });
+
+    // Start the task in a new thread
+    new Thread(task).start();
+}
+
+@FXML
+public void handleDeleteMannschaft() {
+    // Get the selected team
+    String name = mannschaftenNameField.getText();
+
+    // Create a new task
+    Task<Void> task = new Task<Void>() {
+        @Override
+        protected Void call() throws Exception {
+            // Delete team on the server
+            euroBetService.deleteMannschaftByName(name);
+
+            return null;
+        }
+    };
+
+    // Add a listener to update the UI on task completion
+    task.setOnSucceeded(event -> {
+        // Fetch the updated list from the server
+        try {
+            mannschaftenList = FXCollections.observableArrayList(euroBetService.getAllMannschaften());
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+
+        mannschaftenTable.setItems(mannschaftenList);
+        mannschaftenMsg.setStyle("-fx-text-fill: green;");
+        showMessage(mannschaftenMsg, "Löschen erfolgreich.");
+    });
+
+    // Start the task in a new thread
+    new Thread(task).start();
+}
+
+@FXML
+public void handleAddSpiel() {
+    String mannschaft1Name = mannschaft1Field.getValue().toString();
+    String mannschaft2Name = mannschaft2Field.getValue().toString();
+    String spielort = spielortField.getText();
+    LocalDateTime anstosszeit = LocalDateTime.of(anstossdatumField.getValue(), LocalTime.parse(anstosszeitField.getText(), DateTimeFormatter.ofPattern("HH:mm")));
+
+    // Create a new task
+    Task<Void> task = new Task<Void>() {
+        @Override
+        protected Void call() throws Exception {
+            Mannschaft mannschaft1 = getMannschaftByName(mannschaft1Name);
+            Mannschaft mannschaft2 = getMannschaftByName(mannschaft2Name);
+
+            // Create new game
+            Spiel newSpiel = new Spiel(anstosszeit, mannschaft1, mannschaft2, spielort);
+
+            // Add game on the server
+            euroBetService.addSpiel(newSpiel);
+
+            return null;
+        }
+    };
+
+    // Add a listener to update the UI on task completion
+    task.setOnSucceeded(event -> {
+        // Fetch the updated list from the server
+        try {
+            spieleList = FXCollections.observableArrayList(euroBetService.getAllSpiele());
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+
+        gamesTable.setItems(spieleList);
+        spieleMsg.setStyle("-fx-text-fill: green;");
+        showMessage(spieleMsg, "Spiel erfolgreich hinzugefügt.");
+    });
+
+    // Start the task in a new thread
+    new Thread(task).start();
+}
+
+@FXML
+public void handleUpdateSpiel() {
+    // Get the selected game
+    Spiel selectedSpiel = gamesTable.getSelectionModel().getSelectedItem();
+
+    // Create a new task
+    Task<Void> task = new Task<Void>() {
+        @Override
+        protected Void call() throws Exception {
+            if (selectedSpiel != null) {
+                // Update game details
+                LocalDateTime anstosszeit = LocalDateTime.of(anstossdatumField.getValue(), LocalTime.parse(anstosszeitField.getText(), DateTimeFormatter.ofPattern("HH:mm")));
+                Mannschaft mannschaft1 = getMannschaftByName(mannschaft1Field.getValue().toString());
+                Mannschaft mannschaft2 = getMannschaftByName(mannschaft2Field.getValue().toString());
+                String spielort = spielortField.getText();
                 int tore1 = Integer.parseInt(tore1Field.getText());
                 int tore2 = Integer.parseInt(tore2Field.getText());
                 LocalDateTime endezeit = LocalDateTime.of(enddatumField.getValue(), LocalTime.parse(endzeitField.getText(), DateTimeFormatter.ofPattern("HH:mm")));
+                boolean spielBeendet = spielBeendetField.isSelected();
 
-                Tipp.TippAuswahl ergebnis;
-                if (tore1 > tore2) {
-                    ergebnis = Tipp.TippAuswahl.MANNSCHAFT_1_GEWINNT;
-                } else if (tore1 < tore2) {
-                    ergebnis = Tipp.TippAuswahl.MANNSCHAFT_2_GEWINNT;
-                } else {
-                    ergebnis = Tipp.TippAuswahl.UNENTSCHIEDEN;
-                }
-                // Add game
-                Spiel newSpiel = new Spiel(anstosszeit, mannschaft1, mannschaft2, spielort, tore1, tore2, endezeit, true, ergebnis);
-                ObservableList<Spiel> spiele = spieleList;
-                spiele.add(newSpiel);
-                gamesTable.setItems(spiele);
-                spieleMsg.setStyle("-fx-text-fill: green;");
-                showMessage(spieleMsg, "Spiel erfolgreich hinzugefügt.");
-            } catch (NumberFormatException e) {
+                selectedSpiel.setAnstosszeit(anstosszeit);
+                selectedSpiel.setMannschaft1(mannschaft1);
+                selectedSpiel.setMannschaft2(mannschaft2);
+                selectedSpiel.setSpielort(spielort);
+                selectedSpiel.setTore1(tore1);
+                selectedSpiel.setTore2(tore2);
+                selectedSpiel.setEndezeit(endezeit);
+                selectedSpiel.setSpielBeendet(spielBeendet);
+
+                // Update game on the server
+                euroBetService.updateSpiel(selectedSpiel);
+            } else {
                 spieleMsg.setStyle("-fx-text-fill: red;");
-                showMessage(spieleMsg, "Ungültige Eingabe für Tore.");
-            } catch (DateTimeParseException e) {
-                spieleMsg.setStyle("-fx-text-fill: red;");
-                showMessage(spieleMsg, "Ungültige Eingabe für Datum oder Zeit.");
-            } catch (Exception e) {
-                spieleMsg.setStyle("-fx-text-fill: red;");
-                showMessage(spieleMsg, "Fehler beim Hinzufügen des Spiels.");
+                showMessage(spieleMsg, "Spiel nicht gefunden.");
             }
-        } else {
-            // Add game
-            Spiel newSpiel = new Spiel(anstosszeit, mannschaft1, mannschaft2, spielort);
-            spieleList.add(newSpiel);
-            gamesTable.setItems(spieleList);
-            spieleMsg.setStyle("-fx-text-fill: green;");
-            showMessage(spieleMsg, "Spiel erfolgreich hinzugefügt.");
+            return null;
         }
-    }
+    };
 
-    @FXML
-    public void handleUpdateSpiel() {
-        // Get the selected game
-        Spiel selectedSpiel = gamesTable.getSelectionModel().getSelectedItem();
+    // Add a listener to update the UI on task completion
+    task.setOnSucceeded(event -> {
+        gamesTable.refresh();
+        spieleMsg.setStyle("-fx-text-fill: green;");
+        showMessage(spieleMsg, "Spiel erfolgreich geändert.");
+    });
 
-        if (selectedSpiel != null) {
-            // Update game details
-            LocalDateTime anstosszeit = LocalDateTime.of(anstossdatumField.getValue(), LocalTime.parse(anstosszeitField.getText(), DateTimeFormatter.ofPattern("HH:mm")));
-            Mannschaft mannschaft1 = getMannschaftByName(mannschaft1Field.getValue().toString());
-            Mannschaft mannschaft2 = getMannschaftByName(mannschaft2Field.getValue().toString());
-            String spielort = spielortField.getText();
-            int tore1 = Integer.parseInt(tore1Field.getText());
-            int tore2 = Integer.parseInt(tore2Field.getText());
-            LocalDateTime endezeit = LocalDateTime.of(enddatumField.getValue(), LocalTime.parse(endzeitField.getText(), DateTimeFormatter.ofPattern("HH:mm")));
-            boolean spielBeendet = spielBeendetField.isSelected();
+    // Start the task in a new thread
+    new Thread(task).start();
+}
 
-            selectedSpiel.setAnstosszeit(anstosszeit);
-            selectedSpiel.setMannschaft1(mannschaft1);
-            selectedSpiel.setMannschaft2(mannschaft2);
-            selectedSpiel.setSpielort(spielort);
-            selectedSpiel.setTore1(tore1);
-            selectedSpiel.setTore2(tore2);
-            selectedSpiel.setEndezeit(endezeit);
-            selectedSpiel.setSpielBeendet(spielBeendet);
+@FXML
+public void handleDeleteSpiel() {
+    // Get the selected game
+    Spiel selectedSpiel = gamesTable.getSelectionModel().getSelectedItem();
+    System.out.println("VerwaltungController, handleDeleteSpiel: " + selectedSpiel.toString());
 
-            gamesTable.refresh();
-            spieleMsg.setStyle("-fx-text-fill: green;");
-            showMessage(spieleMsg, "Spiel erfolgreich geändert.");
+    // Create a new task
+    Task<Void> task = new Task<Void>() {
+        @Override
+        protected Void call() throws Exception {
+            if (selectedSpiel != null) {
+                // Delete game on the server
+                euroBetService.deleteSpielById(selectedSpiel.getId());
+            } else {
+                spieleMsg.setStyle("-fx-text-fill: red;");
+                showMessage(spieleMsg, "Spiel nicht gefunden.");
+                throw new Exception("Spiel nicht gefunden");
+            }
+            return null;
         }
+    };
+
+    // Add a listener to update the UI on task completion
+    task.setOnSucceeded(event -> {
+        // Fetch the updated list from the server
+        try {
+            System.out.println("VerwaltungController, handleDeleteSpiel: fetching updated list from server");
+            spieleList = FXCollections.observableArrayList(euroBetService.getAllSpiele());
+        } catch (RemoteException e) {
+            System.out.println("VerwaltungController, handleDeleteSpiel: failed to fetch updated list from server" );
+            e.printStackTrace();
+        }
+
+        gamesTable.setItems(spieleList);
+        spieleMsg.setStyle("-fx-text-fill: green;");
+        showMessage(spieleMsg, "Spiel erfolgreich gelöscht.");
+    });
+
+    task.setOnFailed(event -> {
         spieleMsg.setStyle("-fx-text-fill: red;");
         showMessage(spieleMsg, "Spiel nicht gefunden.");
-    }
+    });
 
-    @FXML
-    public void handleDeleteSpiel() {
-        // Get the selected game
-        Spiel selectedSpiel = gamesTable.getSelectionModel().getSelectedItem();
+    // Start the task in a new thread
+    new Thread(task).start();
+}
 
-        if (selectedSpiel != null) {
-            // Remove the game from the list
-            spieleList.remove(selectedSpiel);
-            gamesTable.setItems(spieleList);
-            spieleMsg.setStyle("-fx-text-fill: green;");
-            showMessage(spieleMsg, "Spiel erfolgreich gelöscht.");
+
+
+@FXML
+public void handleAddBenutzer() {
+    String username = benutzerNameField.getText();
+    String password = benutzerPasswortField.getText();
+    Benutzer.BenutzerRolle rolle = benutzerRolleField.getValue();
+
+    // Create a new task
+    Task<Void> task = new Task<Void>() {
+        @Override
+        protected Void call() throws Exception {
+            // Create new user
+            Benutzer newBenutzer = new Benutzer(username, password, rolle);
+
+            // Add user on the server
+            euroBetService.addBenutzer(newBenutzer);
+
+            return null;
         }
-        spieleMsg.setStyle("-fx-text-fill: red;");
-        showMessage(spieleMsg, "Spiel nicht gefunden.");
-    }
+    };
+
+    // Add a listener to update the UI on task completion
+    task.setOnSucceeded(event -> {
+        // Fetch the updated list from the server
+        try {
+            benutzerList = FXCollections.observableArrayList(euroBetService.getAllBenutzer());
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+
+        benutzerTable.setItems(benutzerList);
+        benutzerMsg.setStyle("-fx-text-fill: green;");
+        showMessage(benutzerMsg, "Benutzer erfolgreich hinzugefügt.");
+    });
+
+    // Start the task in a new thread
+    new Thread(task).start();
+}
+
+@FXML
+public void handleUpdateBenutzer() {
+    // Get the selected user
+    String username = benutzerNameField.getText();
+    String password = benutzerPasswortField.getText();
+    Benutzer.BenutzerRolle rolle = benutzerRolleField.getValue();
+    boolean gesperrt = benutzerGesperrtField.isSelected();
+
+    // Create a new task
+    Task<Void> task = new Task<Void>() {
+        @Override
+        protected Void call() throws Exception {
+            // Update user on the server
+            Benutzer updatedBenutzer = new Benutzer(username, password, rolle);
+            euroBetService.updateBenutzer(updatedBenutzer);
+
+            return null;
+        }
+    };
+
+    // Add a listener to update the UI on task completion
+    task.setOnSucceeded(event -> {
+        // Fetch the updated list from the server
+        try {
+            benutzerList = FXCollections.observableArrayList(euroBetService.getAllBenutzer());
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+
+        benutzerTable.setItems(benutzerList);
+        benutzerMsg.setStyle("-fx-text-fill: green;");
+        showMessage(benutzerMsg, "Benutzer erfolgreich aktualisiert.");
+    });
+
+    // Start the task in a new thread
+    new Thread(task).start();
+}
+
+@FXML
+public void handleDeleteBenutzer() {
+    // Get the selected user
+    String username = benutzerNameField.getText();
+
+    // Create a new task
+    Task<Void> task = new Task<Void>() {
+        @Override
+        protected Void call() throws Exception {
+            // Delete user on the server
+            euroBetService.deleteBenutzerByName(username);
+
+            return null;
+        }
+    };
+
+    // Add a listener to update the UI on task completion
+    task.setOnSucceeded(event -> {
+        // Fetch the updated list from the server
+        try {
+            benutzerList = FXCollections.observableArrayList(euroBetService.getAllBenutzer());
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+
+        benutzerTable.setItems(benutzerList);
+        benutzerMsg.setStyle("-fx-text-fill: green;");
+        showMessage(benutzerMsg, "Benutzer erfolgreich gelöscht.");
+    });
+
+    // Start the task in a new thread
+    new Thread(task).start();
+}
 
     private Mannschaft getMannschaftByName(String name) {
         for (Mannschaft mannschaft : mannschaftenList) {
@@ -508,74 +703,6 @@ public class VerwaltungController {
         }
         return null;
     }
-
-    @FXML
-    public void handleAddBenutzer() {
-        String username = benutzerNameField.getText();
-        String password = benutzerPasswortField.getText();
-        Benutzer.BenutzerRolle rolle = benutzerRolleField.getValue();
-
-        // Check if user exists
-        for (Benutzer benutzer : benutzerList) {
-            if (benutzer.getUsername().equals(username)) {
-                benutzerMsg.setStyle("-fx-text-fill: red;");
-                showMessage(benutzerMsg, "Benutzer existiert bereits.");
-                return;
-            }
-        }
-
-        // Add user
-        Benutzer newBenutzer = new Benutzer(username, password, rolle);
-        newBenutzer.setRolle(rolle);
-        benutzerList.add(newBenutzer);
-        benutzerTable.setItems(benutzerList);
-        benutzerMsg.setStyle("-fx-text-fill: green;");
-        showMessage(benutzerMsg, "Benutzer erfolgreich hinzugefügt.");
-    }
-
-    @FXML
-    public void handleUpdateBenutzer() {
-        // Get the selected user
-        String username = benutzerNameField.getText();
-        Benutzer selectedBenutzer = getBenutzerByName(username);
-
-        if (selectedBenutzer != null) {
-            // Update user details
-            String password = benutzerPasswortField.getText();
-            Benutzer.BenutzerRolle rolle = benutzerRolleField.getValue();
-            Boolean gesperrt = benutzerGesperrtField.isSelected();
-
-            selectedBenutzer.setPassword(password);
-            selectedBenutzer.setRolle(rolle);
-            selectedBenutzer.setGesperrt(gesperrt);
-
-            benutzerTable.refresh();
-            benutzerMsg.setStyle("-fx-text-fill: green;");
-            showMessage(benutzerMsg, "Benutzer erfolgreich aktualisiert.");
-        } else {
-            benutzerMsg.setStyle("-fx-text-fill: red;");
-            showMessage(benutzerMsg, "Ausgewählter Benutzer nicht gefunden.");
-        }
-    }
-
-    @FXML
-    public void handleDeleteBenutzer() {
-        // Get the selected user
-        String username = benutzerNameField.getText();
-        Benutzer selectedBenutzer = getBenutzerByName(username);
-
-        if (selectedBenutzer != null) {
-            // Remove the user from the list
-            benutzerList.remove(selectedBenutzer);
-            benutzerTable.setItems(benutzerList);
-            benutzerMsg.setStyle("-fx-text-fill: green;");
-            showMessage(benutzerMsg, "Benutzer erfolgreich gelöscht.");
-        } else {
-            benutzerMsg.setStyle("-fx-text-fill: red;");
-            showMessage(benutzerMsg, "Ausgewählter Benutzer nicht gefunden.");
-        }
-    }
-
 
     private Benutzer getBenutzerByName(String username) {
         for (Benutzer benutzer : benutzerList) {

@@ -11,7 +11,7 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.util.Duration;
-import src.main.Client;
+import src.main.Client1;
 import src.main.classes.Benutzer;
 import src.main.data.BenutzerDao;
 import src.main.server.EuroBetService;
@@ -45,7 +45,7 @@ public class LoginController {
 
     public void initialize() {
         // Data
-        euroBetService = Client.getEuroBetService();
+        euroBetService = Client1.getEuroBetService();
         try {
             benutzerList = FXCollections.observableArrayList(euroBetService.getAllBenutzer());
         } catch (RemoteException e) {
@@ -80,9 +80,9 @@ public class LoginController {
                 pause.setOnFinished(event -> {
                     try {
                         if (benutzer.isAdmin()) {
-                            Client.showVerwaltungScene();
+                            Client1.showVerwaltungScene();
                         } else if (benutzer.isUser()) {
-                            Client.showWettanwendungScene();
+                            Client1.showWettanwendungScene();
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -112,5 +112,9 @@ public class LoginController {
         fadeTransition.setToValue(0.0);
         fadeTransition.setOnFinished(event -> messageLabel.setText(""));
         fadeTransition.play();
+    }
+
+    public void setEuroBetService(EuroBetService euroBetService) {
+        this.euroBetService = euroBetService;
     }
 }

@@ -34,6 +34,18 @@ public class SpieleDao {
     }
 
     public void delete(Spiel spiel) {
+        System.out.println("SpieleDao: delete Spiel: " + spiel.toString());
         spiele.remove(spiel);
+    }
+
+    public void deleteById(int id) {
+        System.out.println("SpieleDao: delete Spiel by id: " + id);
+        for (Spiel spiel : spiele) {
+            if (spiel.getId() == id) {
+                spiele.remove(spiel);
+            }
+        }
+        System.out.println("Printing all games after deleting: ");
+        System.out.println(spiele.toString());
     }
 }
