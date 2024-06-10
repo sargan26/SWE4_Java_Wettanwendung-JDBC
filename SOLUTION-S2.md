@@ -80,3 +80,11 @@ Unit Test: MannschaftenDao
 ![img_27.png](img_27.png)
 
 Unit Test: Mannschaft
+
+![img_28.png](img_28.png)
+
+Einstellung damit der Client mehrmals ausgeführt werden kann.
+
+![img_29.png](img_29.png)
+
+Mehrere Clients laufen. Habe bei einem Client eine Mannschaft hinzugefügt, die wird beim anderen Client auch angezeigt.
