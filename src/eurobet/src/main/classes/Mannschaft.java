@@ -3,19 +3,23 @@ package src.main.classes;
 import java.io.Serializable;
 
 public class Mannschaft implements Serializable {
-    private static int idCounter = 0;
-    private final int id;
+    private static final long serialVersionUID = 1L;
+
+    private int id;
     private String name;
     private double strength;
 
     public Mannschaft(String name, double strength) {
-        this.id = idCounter++;
         this.name = name;
         this.strength = strength;
     }
 
     public int getId() {
         return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -40,6 +44,6 @@ public class Mannschaft implements Serializable {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", strength=" + strength +
-                '}';
+                '}' + "\n";
     }
 }

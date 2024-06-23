@@ -1,18 +1,35 @@
 package src.main.classes;
 
-
 import java.io.Serializable;
 
 public class Benutzer implements Serializable {
     private static final long serialVersionUID = 1L;
 
     public enum BenutzerRolle {
-        ADMIN,
-        USER
+        ADMIN(0),
+        USER(1);
+
+        private final int value;
+
+        BenutzerRolle(int value) {
+            this.value = value;
+        }
+
+        public int getValue() {
+            return value;
+        }
+
+        public static BenutzerRolle fromValue(int value) {
+            for (BenutzerRolle role : BenutzerRolle.values()) {
+                if (role.getValue() == value) {
+                    return role;
+                }
+            }
+            throw new IllegalArgumentException("Invalid role value: " + value);
+        }
     }
 
-    private static int idCounter = 0;
-    private final int id;
+    private int id;
     private String username;
     private String password;
     private BenutzerRolle rolle;
@@ -20,7 +37,6 @@ public class Benutzer implements Serializable {
     private boolean gesperrt;
 
     public Benutzer(String username, String password, BenutzerRolle rolle) {
-        this.id = idCounter++;
         this.username = username;
         this.password = password;
         this.punkte = 0;
@@ -30,6 +46,10 @@ public class Benutzer implements Serializable {
 
     public int getId() {
         return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getUsername() {
@@ -79,4 +99,16 @@ public class Benutzer implements Serializable {
     public void setGesperrt(boolean gesperrt) {
         this.gesperrt = gesperrt;
     }
+
+    public String toString() {
+        return "Benutzer{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", rolle=" + rolle +
+                ", punkte=" + punkte +
+                ", gesperrt=" + gesperrt +
+                '}' + "\n";
+    }
+
 }

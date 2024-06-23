@@ -6,8 +6,9 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 public class Spiel implements Serializable {
-    private static int idCounter = 0;
-    private final int id;
+    private static final long serialVersionUID = 1L;
+
+    private int id;
     private LocalDateTime anstosszeit;
     private Mannschaft mannschaft1;
     private Mannschaft mannschaft2;
@@ -18,10 +19,7 @@ public class Spiel implements Serializable {
     private Boolean spielBeendet;
     private Tipp.TippAuswahl ergebnis;
 
-
-
     public Spiel(LocalDateTime anstosszeit, Mannschaft mannschaft1, Mannschaft mannschaft2, String spielort, int tore1, int tore2, LocalDateTime endezeit, boolean spielBeendet, Tipp.TippAuswahl ergebnis) {
-        this.id = idCounter++;
         this.anstosszeit = anstosszeit;
         this.mannschaft1 = mannschaft1;
         this.mannschaft2 = mannschaft2;
@@ -34,7 +32,6 @@ public class Spiel implements Serializable {
     }
 
     public Spiel(LocalDateTime anstosszeit, Mannschaft mannschaft1, Mannschaft mannschaft2, String spielort) {
-        this.id = idCounter++;
         this.anstosszeit = anstosszeit;
         this.mannschaft1 = mannschaft1;
         this.mannschaft2 = mannschaft2;
@@ -46,9 +43,13 @@ public class Spiel implements Serializable {
         this.ergebnis = null;
     }
 
-        public int getId() {
-            return id;
-        }
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public LocalDateTime getAnstosszeit() {
         return anstosszeit;
@@ -126,13 +127,13 @@ public class Spiel implements Serializable {
     public String toString() {
         return "Spiel{" +
                 "id=" + id +
-                "anstosszeit=" + anstosszeit +
+                ", anstosszeit=" + anstosszeit +
                 ", mannschaft1=" + mannschaft1 +
                 ", mannschaft2=" + mannschaft2 +
-                ", spielort=" + spielort +
+                ", spielort='" + spielort + '\'' +
                 ", tore1=" + tore1 +
                 ", tore2=" + tore2 +
                 ", spielBeendet=" + spielBeendet +
-                '}';
+                '}' + '\n';
     }
 }

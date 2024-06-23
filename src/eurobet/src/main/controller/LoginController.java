@@ -13,7 +13,7 @@ import javafx.scene.input.KeyCode;
 import javafx.util.Duration;
 import src.main.client.Client1;
 import src.main.classes.Benutzer;
-import src.main.data.BenutzerDao;
+import src.main.data.BenutzerDaoImpl;
 import src.main.server.EuroBetService;
 
 import java.rmi.RemoteException;
@@ -27,7 +27,7 @@ public class LoginController {
     // --- Data ---
     private EuroBetService euroBetService;
     private Benutzer eingeloggterBenutzer = null;
-    private BenutzerDao benutzerDao;
+    private BenutzerDaoImpl benutzerDaoImpl;
     private ObservableList<Benutzer> benutzerList;
 
 

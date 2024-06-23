@@ -8,15 +8,15 @@ Am Anfang des Projektes habe ich mir zuerst das Design / den Aufbau der GUI übe
 
 Hier sieht man die ersten Entwürfe:
 
-![img.png](img.png)
+![img.png](doc/img.png)
 
-![img_1.png](img_1.png)
+![img_1.png](doc/img_1.png)
 
 Im fertigen Design sieht es dann so aus:
 
-![img_2.png](img_2.png)
+![img_2.png](doc/img_2.png)
 
-![img_3.png](img_3.png)
+![img_3.png](doc/img_3.png)
 
 Ein Unterschied, der vielleicht auffällt, ist das der Logout Button jetzt weiter oben ist. Das liegt an der verwendeten VBox, die ich für die Anordnung der Elemente verwendet habe.
 
@@ -41,45 +41,45 @@ Die Bedienung der Anwendung wurde sehr ausführlich getestet. Es sind alle Menü
 
 In der Usability Lehrveranstalung haben wir gelernt, das der User bei jeder Aktion ein Feedback erhalten soll. Deshalb wurde bei jedem Button klick, eine Rückmeldung implementiert, die anzeigt, ob die Aktion erfolgreich war (grün) oder nicht (rot).
 
-![img_4.png](img_4.png)
+![img_4.png](doc/img_4.png)
 
 Meldung weil der username falsch ist. Um die Bedienung / Usabilty zu verbessern muss man den Button nicht drücken sondern kann sich auch mit ENTER einloggen.
 
-![img_5.png](img_5.png)
+![img_5.png](doc/img_5.png)
 
 Verwaltung mit ausgewähltem Datensatz.
 
-![img_6.png](img_6.png)
+![img_6.png](doc/img_6.png)
 
 Mannschaften, hinzufügen nicht möglich, da der Name schon existiert.
 
-![img_7.png](img_7.png)
+![img_7.png](doc/img_7.png)
 
 Hinzufügen erfolgreich.
 
-![img_8.png](img_8.png)
+![img_8.png](doc/img_8.png)
 
 Benutzerübersicht.
 
-![img_9.png](img_9.png)
+![img_9.png](doc/img_9.png)
 
 Wettanwendung mit den Spielen und einem SpielTipp im Detail. Je nachdem wann der Tipp abgegeben wurde, und wie die Spielstärke der Mannschaften im Vergleich ist wird ein Potential an Punkten berechnet und eingetragen. Wenn das Spiel abgelaufen ist und der Tipp richtig war, werden dem Benutzer die Punkte gutgeschrieben.
 
-![img_10.png](img_10.png)
+![img_10.png](doc/img_10.png)
 
 Tipp nicht möglich, da das Spiel schon mehr als 80 Minuten läuft.
 
-![img_11.png](img_11.png)
+![img_11.png](doc/img_11.png)
 
 Tipp eingetragen.
 
-![img_12.png](img_12.png)
+![img_12.png](doc/img_12.png)
 
 Highscore Tabelle.
 
-![img_13.png](img_13.png)
+![img_13.png](doc/img_13.png)
 
-![img_14.png](img_14.png)
+![img_14.png](doc/img_14.png)
 
 Hier sieht man ein Beispiel für das responsive Design, den Vergleich in voller Größe und die Minimumgröße für Tablets. Auch in der kleinen Größe sind alle Elemente sichtbar und bedienbar.
 

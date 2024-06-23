@@ -29,62 +29,62 @@ Ein JavaFX Task ist ein Hintergrundprozess, der in einem eigenen Thread ausgefü
 
 ### **Testfälle**
 
-![img_15.png](img_15.png)
+![img_15.png](doc/img_15.png)
 
 Server gestartet
 
-![img_16.png](img_16.png)
+![img_16.png](doc/img_16.png)
 
 Kleiner Testclient, der einfach nur die Verbindung zum Server aufbaut und eine Methode aufruft, die dann alle Beispiel Benutzer anzeigt.
 
-![img_17.png](img_17.png)
+![img_17.png](doc/img_17.png)
 
 Client 1 gestartet.
 
-![img_18.png](img_18.png)
+![img_18.png](doc/img_18.png)
 
-![img_19.png](img_19.png)
+![img_19.png](doc/img_19.png)
 
 Nach dem Einloggen ruft der VerwaltungsController die Testmethode printHello vom Server auf.
 
-![img_20.png](img_20.png)
+![img_20.png](doc/img_20.png)
 
 Spiel hinzugefügt
 
-![img_21.png](img_21.png)
+![img_21.png](doc/img_21.png)
 
 Spiel gelöscht
 
-![img_22.png](img_22.png)
+![img_22.png](doc/img_22.png)
 
 Mannschaft hinzufügen
 
-![img_23.png](img_23.png)
+![img_23.png](doc/img_23.png)
 
 Mannschaft ändern
 
 ...
 
-![img_24.png](img_24.png)
+![img_24.png](doc/img_24.png)
 
 Jetzt in die Wettanwendung gewechselt, Spiel Tipp hinzufügen.
 
-![img_25.png](img_25.png)
+![img_25.png](doc/img_25.png)
 
 Unit Test: DatenManager
 
-![img_26.png](img_26.png)
+![img_26.png](doc/img_26.png)
 
 Unit Test: MannschaftenDao
 
-![img_27.png](img_27.png)
+![img_27.png](doc/img_27.png)
 
 Unit Test: Mannschaft
 
-![img_28.png](img_28.png)
+![img_28.png](doc/img_28.png)
 
 Einstellung damit der Client mehrmals ausgeführt werden kann.
 
-![img_29.png](img_29.png)
+![img_29.png](doc/img_29.png)
 
 Mehrere Clients laufen. Habe bei einem Client eine Mannschaft hinzugefügt, die wird beim anderen Client auch angezeigt.

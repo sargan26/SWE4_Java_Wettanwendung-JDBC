@@ -1,13 +1,11 @@
 package src.main.data;
 
-import javafx.collections.FXCollections;
 import src.main.classes.Benutzer;
 import src.main.classes.Mannschaft;
 import src.main.classes.Spiel;
 import src.main.classes.Tipp;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 public class DatenManager {
@@ -17,18 +15,11 @@ public class DatenManager {
     private TippsDao tippsDao;
     private Benutzer eingeloggterBenutzer;
 
-    public DatenManager() {
-        // Initialisieren der ArrayLists
-        List<Spiel> spiele = new ArrayList<>();
-        List<Mannschaft> mannschaften = new ArrayList<>();
-        List<Benutzer> benutzer = new ArrayList<>();
-        List<Tipp> tipps = new ArrayList<>();
-
-        // Initialisieren Sie die DAOs
-        this.spieleDao = new SpieleDao(spiele);
-        this.mannschaftenDao = new MannschaftenDao(mannschaften);
-        this.benutzerDao = new BenutzerDao(benutzer);
-        this.tippsDao = new TippsDao(tipps);
+    public DatenManager(SpieleDao spieleDao, MannschaftenDao mannschaftenDao, BenutzerDao benutzerDao, TippsDao tippsDao) {
+        this.spieleDao = spieleDao;
+        this.mannschaftenDao = mannschaftenDao;
+        this.benutzerDao = benutzerDao;
+        this.tippsDao = tippsDao;
     }
 
     public void loadExampleMannschaften() {
@@ -43,13 +34,17 @@ public class DatenManager {
     public void loadExampleSpiele() {
         loadExampleMannschaften();
         List<Mannschaft> mannschaften = mannschaftenDao.getAll();
+        System.out.println("loadExampleSpiele");
+        System.out.println(mannschaften);
+        System.out.println(mannschaften.get(0));
+        System.out.println(mannschaften.get(1));
 
         // Should be within time frame to vote
         spieleDao.add(new Spiel(LocalDateTime.now().minusMinutes(20), mannschaften.get(3), mannschaften.get(2), "Warschau", 3, 2, LocalDateTime.now().plusMinutes(70), false, Tipp.TippAuswahl.OFFEN));
-        spieleDao.add(new Spiel(LocalDateTime.now().minusMinutes(75), mannschaften.get(0), mannschaften.get(1), "Madrid", 3, 2, LocalDateTime.now().plusMinutes(15), false, Tipp.TippAuswahl.OFFEN));
+        spieleDao.add(new Spiel(LocalDateTime.now().minusMinutes(75), mannschaften.get(1), mannschaften.get(2), "Madrid", 3, 2, LocalDateTime.now().plusMinutes(15), false, Tipp.TippAuswahl.OFFEN));
         // Should not be votable
-        spieleDao.add(new Spiel(LocalDateTime.now().minusMinutes(85), mannschaften.get(0), mannschaften.get(1), "Madrid", 3, 2, LocalDateTime.now().plusMinutes(5), false, Tipp.TippAuswahl.OFFEN));
-        spieleDao.add(new Spiel(LocalDateTime.now().minusDays(2), mannschaften.get(0), mannschaften.get(4), "Berlin", 3, 2, LocalDateTime.now().minusDays(2).plusMinutes(90), true, Tipp.TippAuswahl.MANNSCHAFT_1_GEWINNT));
+        spieleDao.add(new Spiel(LocalDateTime.now().minusMinutes(85), mannschaften.get(1), mannschaften.get(2), "Madrid", 3, 2, LocalDateTime.now().plusMinutes(5), false, Tipp.TippAuswahl.OFFEN));
+        spieleDao.add(new Spiel(LocalDateTime.now().minusDays(2), mannschaften.get(1), mannschaften.get(4), "Berlin", 3, 2, LocalDateTime.now().minusDays(2).plusMinutes(90), true, Tipp.TippAuswahl.MANNSCHAFT_1_GEWINNT));
 
         spieleDao.add(new Spiel(LocalDateTime.now().plusDays(1), mannschaften.get(2), mannschaften.get(3), "Wien"));
         spieleDao.add(new Spiel(LocalDateTime.now().plusDays(3), mannschaften.get(5), mannschaften.get(2), "Rom"));
@@ -71,17 +66,17 @@ public class DatenManager {
     }
 
     public void updateScores() {
-    for (Benutzer benutzer : benutzerDao.getAll()) {
-        benutzer.setPunkte(0);
-    }
-    for (Tipp tipp : tippsDao.getAll()) {
-        Spiel spiel = spieleDao.getSpielById(tipp.getSpielId());
-        if (spiel.getSpielBeendet() && tipp.getTipp().equals(spiel.getErgebnis())) {
-            Benutzer benutzer = benutzerDao.getBenutzerById(tipp.getBenutzerId());
-            benutzer.setPunkte(benutzer.getPunkte() + 100);
+        for (Benutzer benutzer : benutzerDao.getAll()) {
+            benutzer.setPunkte(0);
+        }
+        for (Tipp tipp : tippsDao.getAll()) {
+            Spiel spiel = spieleDao.getSpielById(tipp.getSpielId());
+            if (spiel.getSpielBeendet() && tipp.getTipp().equals(spiel.getErgebnis())) {
+                Benutzer benutzer = benutzerDao.getBenutzerById(tipp.getBenutzerId());
+                benutzer.setPunkte(benutzer.getPunkte() + 100);
+            }
         }
     }
-}
 
     public SpieleDao getSpieleDao() {
         return spieleDao;
@@ -102,6 +97,8 @@ public class DatenManager {
     public Benutzer getEingeloggterBenutzer() {
         return eingeloggterBenutzer;
     }
+
+
 
     public void setEingeloggterBenutzer(Benutzer eingeloggterBenutzer) {
         this.eingeloggterBenutzer = eingeloggterBenutzer;

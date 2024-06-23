@@ -4,14 +4,32 @@ import java.io.Serializable;
 
 public class Tipp implements Serializable {
     public enum TippAuswahl {
-        MANNSCHAFT_1_GEWINNT,
-        MANNSCHAFT_2_GEWINNT,
-        UNENTSCHIEDEN,
-        OFFEN
+        UNENTSCHIEDEN(0),
+        MANNSCHAFT_1_GEWINNT(1),
+        MANNSCHAFT_2_GEWINNT(2),
+        OFFEN(3);
+
+        private final int value;
+
+        TippAuswahl(int value) {
+            this.value = value;
+        }
+
+        public int getValue() {
+            return value;
+        }
+
+        public static TippAuswahl fromValue(int value) {
+            for (TippAuswahl tippAuswahl : TippAuswahl.values()) {
+                if (tippAuswahl.getValue() == value) {
+                    return tippAuswahl;
+                }
+            }
+            throw new IllegalArgumentException("Invalid TippAuswahl value: " + value);
+        }
     }
 
-    private static int idCounter = 0;
-    private final int id;
+    private int id;
     private int benutzerId;
     private int spielId;
     private TippAuswahl tipp;
@@ -19,7 +37,6 @@ public class Tipp implements Serializable {
     private int punkte;
 
     public Tipp(int benutzerId, int spielId, TippAuswahl tipp, int potential) {
-        this.id = idCounter++;
         this.benutzerId = benutzerId;
         this.spielId = spielId;
         this.tipp = tipp;
@@ -29,6 +46,10 @@ public class Tipp implements Serializable {
 
     public int getId() {
         return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public int getBenutzerId() {

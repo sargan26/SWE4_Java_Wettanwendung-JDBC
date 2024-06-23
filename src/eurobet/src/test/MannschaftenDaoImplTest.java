@@ -2,16 +2,21 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 import src.main.classes.Mannschaft;
-import src.main.data.MannschaftenDao;
+import src.main.data.MannschaftenDaoImpl;
+import src.main.database.DatabaseManager;
+
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
-public class MannschaftenDaoTest {
-    private MannschaftenDao dao;
+public class MannschaftenDaoImplTest {
+    private MannschaftenDaoImpl dao;
     private Mannschaft testMannschaft;
 
     @BeforeEach
-    public void setUp() {
-        dao = new MannschaftenDao(new ArrayList<>());
+    public void setUp() throws SQLException {
+        Connection connection = DatabaseManager.getConnection();
+        dao = new MannschaftenDaoImpl(connection);
         testMannschaft = new Mannschaft("Test", 1.0);
         dao.add(testMannschaft);
     }
